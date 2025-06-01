@@ -17,10 +17,28 @@ class SpringAMQPTest {
     public void SimpleQueueTest(){
         rabbitTemplate.convertAndSend( queueName,"hello world");
     }
+    //均匀分配测试
     @Test
     public void WorkQueueTest(){
         for(int i = 0; i < 50; i++){
             rabbitTemplate.convertAndSend( "work-queue","hello world"+i);
         }
+    }
+    //fanout交换机
+    @Test
+    public void fanoutTest(){
+        rabbitTemplate.convertAndSend( "amq.fanout","", "hello world");
+    }
+
+    //direct交换机
+    @Test
+    public void directTest(){
+        rabbitTemplate.convertAndSend( "amq.direct","blue", "hello world");
+    }
+
+    //topic交换机
+    @Test
+    public void topicTest(){
+        rabbitTemplate.convertAndSend( "amq.topic","china.news", "hello world");
     }
 }
