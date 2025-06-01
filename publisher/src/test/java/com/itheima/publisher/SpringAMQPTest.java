@@ -6,6 +6,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class SpringAMQPTest {
@@ -45,5 +48,14 @@ class SpringAMQPTest {
     @Test
     public void annotationTest(){
         rabbitTemplate.convertAndSend( "hmdirect-exchange","red", "hello world");
+        rabbitTemplate.convertAndSend("t","","hello");
+    }
+    //消息转换器测试
+    @Test
+    public void converterTest(){
+        Map<String,Object> map = new HashMap<>();
+        map.put("name","zhangsan");
+        map.put("age",18);
+        rabbitTemplate.convertAndSend( "test",map);
     }
 }
