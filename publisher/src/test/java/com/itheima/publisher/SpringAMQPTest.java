@@ -41,4 +41,9 @@ class SpringAMQPTest {
     public void topicTest(){
         rabbitTemplate.convertAndSend( "amq.topic","china.news", "hello world");
     }
+
+    @Test
+    public void annotationTest(){
+        rabbitTemplate.convertAndSend( "hmdirect-exchange","red", "hello world");
+    }
 }

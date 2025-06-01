@@ -1,6 +1,10 @@
 package com.itheima.consumer.mq;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.ExchangeTypes;
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
@@ -60,5 +64,15 @@ public class SpringRabbitListener {
     @RabbitListener(queues = "topic-queue2")
     public void topicQueueListener2(String msg){
         System.err.println("消费者2接收到消息是：" + msg);
+    }
+
+    //注解声明
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(name = "hmdirect-queue1",durable = "true"),
+            exchange = @Exchange(name = "hmdirect-exchange",type = ExchangeTypes.DIRECT),
+            key = {"red","yellow"}
+    ))
+    public void hmdirectQueueListener1(String msg){
+        System.out.println("消费者1接收到消息是：" + msg);
     }
 }
