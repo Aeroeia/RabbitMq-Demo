@@ -2,10 +2,7 @@ package com.itheima.consumer.mq;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
-import org.springframework.amqp.rabbit.annotation.Exchange;
-import org.springframework.amqp.rabbit.annotation.Queue;
-import org.springframework.amqp.rabbit.annotation.QueueBinding;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -79,7 +76,9 @@ public class SpringRabbitListener {
     }
 
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = "test"),
+            value = @Queue(name = "test"
+            ,durable = "true"
+            ,arguments = @Argument(name = "x-queue-mode",value = "lazy")),//手动开启lazy队列 3.12后自动开启
             exchange = @Exchange(name = "t",type = ExchangeTypes.FANOUT)
     ))
     public void test(Map<String,Object> msg){
