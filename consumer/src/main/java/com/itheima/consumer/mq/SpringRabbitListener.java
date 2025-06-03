@@ -84,4 +84,10 @@ public class SpringRabbitListener {
     public void test(Map<String,Object> msg){
         System.out.println("消费者接收到消息是：" + msg);
     }
+    /* 消费者确认机制
+    none：接收到消息直接返回ack
+    manual：消费者处理完消息后调用channel.basicAck()手动返回ack
+    auto：消费者正确处理完消息后调用channel.basicAck()自动返回ack
+    否则返回nack一直重试 如果遇到消息格式转换问题返回reject 消息丢失
+     */
 }
