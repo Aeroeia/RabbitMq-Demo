@@ -10,7 +10,9 @@ import org.springframework.context.annotation.Bean;
 public class PublisherApplication {
     @Bean
     public MessageConverter messageConverter(){
-        return new Jackson2JsonMessageConverter();
+        Jackson2JsonMessageConverter jjmc = new Jackson2JsonMessageConverter();
+        jjmc.setCreateMessageIds(true); //设置请求头带上唯一id用于消息幂等
+        return jjmc;
     }
     public static void main(String[] args) {
         SpringApplication.run(PublisherApplication.class);

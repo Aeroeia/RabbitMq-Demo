@@ -2,6 +2,7 @@ package com.itheima.consumer.mq;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.stereotype.Component;
 
@@ -77,12 +78,12 @@ public class SpringRabbitListener {
 
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(name = "test"
-            ,durable = "true"
-            ,arguments = @Argument(name = "x-queue-mode",value = "lazy")),//手动开启lazy队列 3.12后自动开启
-            exchange = @Exchange(name = "t",type = ExchangeTypes.FANOUT)
+            ,durable = "true")//,arguments = @Argument(name = "x-queue-mode",value = "lazy")
+            ,exchange = @Exchange(name = "t",type = ExchangeTypes.FANOUT)
     ))
-    public void test(Map<String,Object> msg){
-        System.out.println("消费者接收到消息是：" + msg);
+    public void test(Message message){
+        System.out.println("消息id:"+message.getMessageProperties().getMessageId());
+        System.out.println("收到消息:"+new String(message.getBody() ));
     }
     /* 消费者确认机制
     none：接收到消息直接返回ack
