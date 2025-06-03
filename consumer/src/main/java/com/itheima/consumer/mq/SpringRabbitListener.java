@@ -2,6 +2,7 @@ package com.itheima.consumer.mq;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,7 @@ import java.util.Map;
 @Slf4j
 @Component
 public class SpringRabbitListener {
-    private static int cnt1 = 0;
+  /*  private static int cnt1 = 0;
     private static int cnt2 = 0;
 
     //单消费者
@@ -64,7 +65,7 @@ public class SpringRabbitListener {
     public void topicQueueListener2(String msg){
         System.err.println("消费者2接收到消息是：" + msg);
     }
-
+    */
     //注解声明
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(name = "hmdirect-queue1",durable = "true"),
@@ -77,12 +78,12 @@ public class SpringRabbitListener {
 
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(name = "test"
-            ,durable = "true"
-            ,arguments = @Argument(name = "x-queue-mode",value = "lazy")),//手动开启lazy队列 3.12后自动开启
-            exchange = @Exchange(name = "t",type = ExchangeTypes.FANOUT)
+            ,durable = "true")//,arguments = @Argument(name = "x-queue-mode",value = "lazy")
+            ,exchange = @Exchange(name = "t",type = ExchangeTypes.FANOUT)
     ))
-    public void test(Map<String,Object> msg){
-        System.out.println("消费者接收到消息是：" + msg);
+    public void test(Message message){
+        System.out.println("消息id:"+message.getMessageProperties().getMessageId());
+        System.out.println("收到消息:"+new String(message.getBody() ));
     }
     /* 消费者确认机制
     none：接收到消息直接返回ack
@@ -90,4 +91,25 @@ public class SpringRabbitListener {
     auto：消费者正确处理完消息后调用channel.basicAck()自动返回ack
     否则返回nack一直重试 如果遇到消息格式转换问题返回reject 消息丢失
      */
+
+    //延迟消息
+    @RabbitListener(
+            bindings = @QueueBinding(value = @Queue(name = "dlx.queue",durable = "true"),
+            exchange = @Exchange(name = "dlx.direct",type = ExchangeTypes.DIRECT),
+            key = {"hi"}))
+    public void ListenDlxQueue(String msg){
+        System.out.println("消费者接收到消息是：" + msg);
+    }
+
+    //通过插件接收延迟消息
+    @RabbitListener(
+            bindings = @QueueBinding(
+                    value = @Queue(name = "delay.queue",durable = "true"),
+                    exchange = @Exchange(name = "delay.direct",type = ExchangeTypes.DIRECT,delayed = "true"),
+                    key = {"delay"}
+            )
+    )
+    public void ListenDelayQueue(String msg){
+        System.out.println("消费者接收到消息是：" + msg);
+    }
 }

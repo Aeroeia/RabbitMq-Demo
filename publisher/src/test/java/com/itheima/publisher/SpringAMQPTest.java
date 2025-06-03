@@ -111,8 +111,26 @@ class SpringAMQPTest {
         Message message = MessageBuilder.withBody("hello".getBytes(StandardCharsets.UTF_8))
                 .setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT)
                 .build();
-        for (int i = 0; i < 1000000; i++) {
+        for (int i = 0; i < 1000000; i++) {     
             rabbitTemplate.convertAndSend("simple-queue",message);
         }
+    }
+
+    //延迟消息
+    @Test
+    public void testDelayMessage() {
+        rabbitTemplate.convertAndSend("normal.direct","hi","hello delay",message -> {
+            message.getMessageProperties().setExpiration("2000");
+            return message;
+        });
+    }
+    //测试延迟消息(插件)
+    @Test
+    public void testDelayMessage2(){
+        String message = "hello delayPlugins";
+        rabbitTemplate.convertAndSend("delay.direct","delay",message,msg->{
+            msg.getMessageProperties().setDelay(5000);
+            return msg;
+        });
     }
 }

@@ -11,3 +11,9 @@ spring:
     listener:
       simple:
         prefetch: 1  #每次只能获取一条消息，处理完成才能获取下一个信息 确保了处理速度快的消费者处理更多数据
+        acknowledge-mode: auto #消费者确认机制
+        retry: #消费者失败重试机制
+          enabled: true #直接在本地进行尝试而不是通过mq重复来回发送消息
+          initial-interval: 1000ms
+          max-attempts: 3
+          multiplier: 1
